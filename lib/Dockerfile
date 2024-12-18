@@ -1,25 +1,24 @@
-FROM node:20
+FROM node:lts-buster
+
+RUN apt-get update && \
+  apt-get install -y \
+  ffmpeg \
+  imagemagick \
+  webp && \
+  apt-get upgrade -y && \
+  npm i pm2 -g && \
+  rm -rf /var/lib/apt/lists/*
+  
+RUN git clone https://github.com/STAR-KING0/Queen_Alya  /root/STAR-KING0
+WORKDIR /root/STAR-KING0/
 
 
-USER node
+COPY package.json .
+RUN npm install pm2 -g
+RUN npm install --legacy-peer-deps
 
+COPY . .
 
-RUN git clone https://github.com/abbybots141/Queen_Maria home/node/blue
+EXPOSE 3000
 
-
-WORKDIR /home/node/blue
-
-
-RUN chmod -R 777 /home/node/blue/
-
-
-RUN yarn install && yarn add http
-
-
-COPY server.js .
-
-
-COPY start.sh .
-
-
-CMD ["bash","start.sh" ]
+CMD ["npm","start"]
